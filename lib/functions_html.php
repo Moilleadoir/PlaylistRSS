@@ -59,15 +59,18 @@ function playlist_radio_stream($title, $radio_url) {
 }
 
 
-function playlist_podcast($title, $podcast_url, $items)
+function playlist_podcast($title, $podcast_url, $maxitems, $reverse = FALSE)
 {
 	category_title($title.'<span class="url">'.$podcast_url.'</span>');
 	$feed = new SimplePie(); $feed->set_feed_url($podcast_url); $feed->set_item_class(); 
 	$feed->enable_cache(true); $feed->strip_htmltags(); $feed->set_cache_duration(3600);
-	$feed->set_cache_location('lib/simplepie/cache'); $feed->init(); $feed->handle_content_type();  
+	$feed->set_cache_location('lib/simplepie/cache'); $feed->init(); $feed->handle_content_type();
+	$feeditems = $feed->get_items(0, $maxitems);
+	if ($reverse)
+		$feeditems = array_reverse($feeditems);
 	$i = 1;
 	echo '<ul>';
-	foreach($feed->get_items(0, $GLOBALS['limititems']) as $item) 
+	foreach($feeditems as $item) 
 	{  
 		$mediaEnclosures = $item->get_enclosures(); 
 		foreach ($mediaEnclosures as $enclosure) 
@@ -106,14 +109,17 @@ function playlist_podcast($title, $podcast_url, $items)
 	playlist_space();
 }
 
-function playlist_podcast_nospace($title, $podcast_url, $items)
+function playlist_podcast_nospace($title, $podcast_url, $maxitems, $reverse = FALSE)
 {
 	$feed = new SimplePie(); $feed->set_feed_url($podcast_url); $feed->set_item_class(); 
 	$feed->enable_cache(true); $feed->strip_htmltags(); $feed->set_cache_duration(3600);
-	$feed->set_cache_location('lib/simplepie/cache'); $feed->init(); $feed->handle_content_type();  
+	$feed->set_cache_location('lib/simplepie/cache'); $feed->init(); $feed->handle_content_type();
+	$feeditems = $feed->get_items(0, $maxitems);
+	if ($reverse)
+		$feeditems = array_reverse($feeditems);
 	$i = 1;
 	echo '<ul>';
-	foreach($feed->get_items(0, $items) as $item) 
+	foreach($feeditems as $item) 
 	{  
 		$mediaEnclosures = $item->get_enclosures(); 
 		foreach ($mediaEnclosures as $enclosure) 
